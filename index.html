@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H Hue Questionnaire</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root{
+    --bg:#FAFAFA;
+    --surface:#FFFFFF;
+    --surface-soft:#F3F4F6;
+    --ink:#111827;
+    --ink-soft:#6B7280;
+    --line:#E3E5EA;
+    --accent:#6366F1;
+    --accent-strong:#4F46E5;
+    --accent-cyan:#06B6D4;
+    --accent-ink:#FFFFFF;
+    --chip-bg:#FFFFFF;
+    --chip-bg-active:#6366F1;
+    --chip-ink-active:#FFFFFF;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#111827;
+      --surface:#1A2234;
+      --surface-soft:#202A3D;
+      --ink:#F3F4F6;
+      --ink-soft:#9CA3AF;
+      --line:#2E3850;
+      --accent:#818CF8;
+      --accent-strong:#A5B4FC;
+      --accent-cyan:#22D3EE;
+      --accent-ink:#111827;
+      --chip-bg:#202A3D;
+      --chip-bg-active:#818CF8;
+      --chip-ink-active:#111827;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111827;
+    --surface:#1A2234;
+    --surface-soft:#202A3D;
+    --ink:#F3F4F6;
+    --ink-soft:#9CA3AF;
+    --line:#2E3850;
+    --accent:#818CF8;
+    --accent-strong:#A5B4FC;
+    --accent-cyan:#22D3EE;
+    --accent-ink:#111827;
+    --chip-bg:#202A3D;
+    --chip-bg-active:#818CF8;
+    --chip-ink-active:#111827;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+    padding-inline:16px;
+    padding-block:32px;
+  }
+  h1,h2,h3{font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif; font-weight:700; text-wrap:balance; margin:0;}
+  .brandbar{display:flex; align-items:center; gap:10px;}
+  .brandbar svg{width:26px; height:25px; flex-shrink:0;}
+  .brandbar span{font-size:14px; font-weight:700; letter-spacing:-.01em; color:var(--ink);}
+  p{margin:0; line-height:1.55;}
+  .wrap{max-width:680px; margin:0 auto; display:flex; flex-direction:column; gap:28px;}
+
+  header.page{display:flex; flex-direction:column; gap:10px;}
+  .eyebrow{
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-strong); font-weight:600;
+  }
+  h1{font-size:clamp(26px,5vw,34px); font-weight:600; color:var(--ink);}
+  .sub{color:var(--ink-soft); font-size:15px; max-width:56ch;}
+  .confidential{
+    display:inline-flex; gap:8px; align-items:center;
+    font-size:13px; color:var(--ink-soft);
+    background:var(--surface-soft); border:1px solid var(--line);
+    border-radius:999px; padding:6px 14px; width:fit-content;
+  }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; padding:22px 22px 26px; display:flex; flex-direction:column; gap:16px;
+  }
+  .panel.confirmed{background:var(--surface-soft); border-left:3px solid var(--accent-cyan);}
+  .panel h2{font-size:20px; font-weight:600;}
+  .panel .hint{font-size:13.5px; color:var(--ink-soft); margin-top:-6px;}
+
+  .confirmed-grid{display:flex; flex-direction:column; gap:14px;}
+  .confirmed-row{display:flex; flex-direction:column; gap:4px;}
+  .confirmed-label{font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-strong); font-weight:600;}
+  .confirmed-value{font-size:15px; line-height:1.5;}
+  .confirmed-value b{font-weight:600;}
+
+  .q{display:flex; flex-direction:column; gap:10px;}
+  .q label.ql{font-size:15px; font-weight:600;}
+  .q .ql-hint{font-size:13px; color:var(--ink-soft); font-weight:400;}
+
+  input[type="text"], input[type="number"], textarea{
+    width:100%; font-family:inherit; font-size:15px; color:var(--ink);
+    background:var(--bg); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; resize:vertical;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus{
+    outline:2px solid var(--accent); outline-offset:1px;
+  }
+  textarea{min-height:64px;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:480px){ .two-col{grid-template-columns:1fr;} }
+  .two-col label.mini{font-size:13px; color:var(--ink-soft); display:block; margin-bottom:4px;}
+
+  .pills{display:flex; flex-wrap:wrap; gap:8px;}
+  .pill{position:relative;}
+  .pill input{position:absolute; opacity:0; width:1px; height:1px;}
+  .pill span{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid var(--line); background:var(--chip-bg); color:var(--ink);
+    border-radius:999px; padding:8px 14px; font-size:14px; cursor:pointer; user-select:none;
+  }
+  .pill input:checked + span{
+    background:var(--chip-bg-active); color:var(--chip-ink-active); border-color:var(--chip-bg-active);
+  }
+  .pill input:focus-visible + span{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .other-box{margin-top:2px;}
+  .other-box[hidden]{display:none;}
+
+  .slider-wrap{display:flex; flex-direction:column; gap:8px;}
+  input[type="range"]{width:100%; accent-color:var(--accent);}
+  .slider-labels{display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft);}
+  .slider-value{font-size:14px; font-weight:600; color:var(--accent-strong);}
+
+  .reveal{display:flex; flex-direction:column; gap:14px; border-top:1px dashed var(--line); padding-top:14px; margin-top:2px;}
+  .reveal[hidden]{display:none;}
+
+  .section-index{font-size:13px; color:var(--ink-soft); font-weight:600;}
+
+  .review pre, .review textarea{
+    width:100%; min-height:260px; font-family:"JetBrains Mono","Consolas",monospace;
+    font-size:12.5px; line-height:1.6; white-space:pre-wrap; background:var(--bg);
+    border:1px solid var(--line); border-radius:10px; padding:14px; color:var(--ink);
+  }
+  .review-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+  button.copy{
+    font-family:inherit; font-size:15px; font-weight:600; cursor:pointer;
+    background:var(--accent); color:var(--accent-ink); border:none;
+    border-radius:10px; padding:12px 20px;
+  }
+  button.copy:hover{background:var(--accent-strong);}
+  .copy-status{font-size:13.5px; color:var(--accent-strong); font-weight:600; min-height:1em;}
+  .review-steps{font-size:14px; color:var(--ink-soft); line-height:1.6;}
+  .review-steps ol{margin:4px 0 0; padding-left:20px;}
+
+  footer.note{font-size:12.5px; color:var(--ink-soft); text-align:center; padding-bottom:10px;}
+
+  details.recap-toggle{border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  details.recap-toggle + details.recap-toggle{margin-top:10px;}
+  details.recap-toggle summary{
+    cursor:pointer; list-style:none; font-size:15px; font-weight:600;
+    padding:14px 16px; display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface-soft); color:var(--ink);
+  }
+  details.recap-toggle summary::-webkit-details-marker{display:none;}
+  details.recap-toggle summary::after{
+    content:"+"; font-size:18px; font-weight:400; color:var(--accent-strong); margin-left:12px;
+  }
+  details.recap-toggle[open] summary::after{content:"\2212";}
+  details.recap-toggle summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+  .recap-body{padding:16px; font-size:14.5px; line-height:1.65; color:var(--ink);}
+  .recap-body p + p{margin-top:12px;}
+  .transcript-text{
+    max-height:420px; overflow-y:auto; font-family:"JetBrains Mono","Consolas",monospace;
+    font-size:12px; line-height:1.7; white-space:pre-wrap; background:var(--bg);
+    border-top:1px solid var(--line);
+  }
+  .transcript-text .lines{padding:14px 16px;}
+  .transcript-disclaimer{
+    font-size:12.5px; color:var(--ink-soft); font-family:"Plus Jakarta Sans",sans-serif;
+    border-top:1px dashed var(--line); margin:12px 0 0; padding-top:12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="page">
+    <div class="brandbar">
+      <svg viewBox="0 0 48 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
+      <span>Flickin Labs</span>
+    </div>
+    <span class="eyebrow">For H Hue Design Studio</span>
+    <h1>A few quick questions</h1>
+    <p class="sub">Pick and choose. Answer only what you're comfortable with, it just helps us tailor the plan to your business instead of something generic. Nothing here is required.</p>
+    <span class="confidential">&#128274; Everything you share stays strictly between H Hue and Flickin Labs.</span>
+  </header>
+
+
+  <section class="panel confirmed">
+    <h2>What you've already told us</h2>
+    <p class="hint">Just confirming we've got this right. No need to repeat it, add a note below only if something needs correcting.</p>
+    <div class="confirmed-grid">
+      <div class="confirmed-row">
+        <span class="confirmed-label">Competitors you named</span>
+        <span class="confirmed-value"><b>Panache</b> and <b>Hanging Hammer</b>, from a luxury segment penetration perspective. <b>Aertsen</b>, from a volume and premium positioning perspective.</span>
+      </div>
+      <div class="confirmed-row">
+        <span class="confirmed-label">Societies you'd like to tap into</span>
+        <span class="confirmed-value">First segment: <b>Fortune Sonthalia</b> (Kokapet), <b>Hallmark Treasor</b>, <b>SAS Crown</b>.<br>Next segment: <b>Prestige Beverley Hills</b>, <b>Rajapushpa Provincia</b>.</span>
+      </div>
+    </div>
+    <div class="q">
+      <label class="ql" for="confirm_correction">Anything to add or correct here?</label>
+      <textarea id="confirm_correction" data-field data-label="Correction to competitors/societies above"></textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">1 of 6</span>
+    <h2>Your numbers</h2>
+
+    <div class="q">
+      <div class="two-col">
+        <div>
+          <label class="mini" for="rev_last">Revenue last year (Rs, roughly)</label>
+          <input type="text" id="rev_last" data-field data-label="Revenue last year" inputmode="numeric" placeholder="e.g. 28 lakh">
+        </div>
+        <div>
+          <label class="mini" for="rev_goal">Revenue goal this year (Rs, roughly)</label>
+          <input type="text" id="rev_goal" data-field data-label="Revenue goal this year" inputmode="numeric" placeholder="e.g. 45 lakh">
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">When a client signs with you, how does payment usually work?</label>
+      <div class="pills" data-group="billing_model" data-label="How payment works">
+        <label class="pill"><input type="radio" name="billing_model"><span>I bill my design fee, client pays vendors directly</span></label>
+        <label class="pill"><input type="radio" name="billing_model"><span>Client pays me the full project amount</span></label>
+        <label class="pill"><input type="radio" name="billing_model"><span>It varies by project</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">Typical project budget</label>
+      <div class="pills" data-group="project_budget" data-label="Typical project budget">
+        <label class="pill"><input type="radio" name="project_budget"><span>Under Rs 10 lakh</span></label>
+        <label class="pill"><input type="radio" name="project_budget"><span>Rs 10-25 lakh</span></label>
+        <label class="pill"><input type="radio" name="project_budget"><span>Rs 25-50 lakh</span></label>
+        <label class="pill"><input type="radio" name="project_budget"><span>Rs 50 lakh to 1 Cr</span></label>
+        <label class="pill"><input type="radio" name="project_budget"><span>Rs 1 Cr+</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">Typical time, first call to handover</label>
+      <div class="pills" data-group="project_timeline" data-label="Typical project timeline">
+        <label class="pill"><input type="radio" name="project_timeline"><span>Under 2 months</span></label>
+        <label class="pill"><input type="radio" name="project_timeline"><span>2-4 months</span></label>
+        <label class="pill"><input type="radio" name="project_timeline"><span>4-6 months</span></label>
+        <label class="pill"><input type="radio" name="project_timeline"><span>6 months+</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="two-col">
+        <div>
+          <label class="mini" for="margin_pct">Roughly what % of a project's value ends up as your actual profit, after vendors, materials and team time</label>
+          <input type="text" id="margin_pct" data-field data-label="Profit margin, roughly" placeholder="e.g. 20%">
+        </div>
+        <div>
+          <label class="mini" for="monthly_costs">Roughly what your monthly running costs are today (team, rent, software etc)</label>
+          <input type="text" id="monthly_costs" data-field data-label="Monthly running costs" placeholder="e.g. 3 lakh">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">2 of 6</span>
+    <h2>Enquiries today</h2>
+
+    <div class="q">
+      <label class="mini" for="enq_monthly">Enquiries per month, roughly</label>
+      <input type="number" id="enq_monthly" data-field data-label="Enquiries per month" min="0">
+      <div class="two-col">
+        <div>
+          <label class="mini" for="enq_consult">Become a paid consultation</label>
+          <input type="number" id="enq_consult" data-field data-label="Enquiries that become paid consultation" min="0">
+        </div>
+        <div>
+          <label class="mini" for="enq_signed">Actually sign</label>
+          <input type="number" id="enq_signed" data-field data-label="Enquiries that sign" min="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">Where do most enquiries come from? <span class="ql-hint">(tick all that apply)</span></label>
+      <div class="pills" data-checkgroup="enq_source" data-label="Where enquiries come from">
+        <label class="pill"><input type="checkbox" value="Referral"><span>Referral</span></label>
+        <label class="pill"><input type="checkbox" value="Instagram"><span>Instagram</span></label>
+        <label class="pill"><input type="checkbox" value="Justdial"><span>Justdial</span></label>
+        <label class="pill"><input type="checkbox" value="Walk-in"><span>Walk-in</span></label>
+        <label class="pill"><input type="checkbox" value="Website"><span>Website</span></label>
+        <label class="pill"><input type="checkbox" value="__other" data-other-toggle="enq_source_other"><span>Other</span></label>
+      </div>
+      <div class="other-box" id="enq_source_other" hidden>
+        <input type="text" placeholder="Tell us where" data-field data-label="Enquiry source, other">
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">How do you track enquiries today?</label>
+      <div class="pills" data-group="enq_tracking" data-label="How enquiries are tracked">
+        <label class="pill"><input type="radio" name="enq_tracking"><span>Notebook</span></label>
+        <label class="pill"><input type="radio" name="enq_tracking"><span>Spreadsheet</span></label>
+        <label class="pill"><input type="radio" name="enq_tracking"><span>CRM</span></label>
+        <label class="pill"><input type="radio" name="enq_tracking"><span>Nothing formal</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">Typical reply speed to a new enquiry</label>
+      <div class="pills" data-group="enq_replyspeed" data-label="Typical reply speed">
+        <label class="pill"><input type="radio" name="enq_replyspeed"><span>Same day</span></label>
+        <label class="pill"><input type="radio" name="enq_replyspeed"><span>Within a few days</span></label>
+        <label class="pill"><input type="radio" name="enq_replyspeed"><span>Varies</span></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">3 of 6</span>
+    <h2>Past marketing experience</h2>
+
+    <div class="q">
+      <label class="ql">Have you worked with an agency or freelancer before, or run paid ads yourself?</label>
+      <div class="pills" data-group="past_marketing" data-label="Worked with agency/ads before">
+        <label class="pill"><input type="radio" name="past_marketing" data-reveal="past_marketing_detail"><span>Yes</span></label>
+        <label class="pill"><input type="radio" name="past_marketing" data-reveal-hide="past_marketing_detail"><span>No</span></label>
+      </div>
+      <div class="reveal" id="past_marketing_detail" hidden>
+        <div class="slider-wrap">
+          <label class="ql" for="past_rating">How would you rate that experience overall?</label>
+          <input type="range" id="past_rating" data-field data-label="Rating of past marketing experience" min="1" max="5" step="1" value="3">
+          <div class="slider-labels"><span>1 &middot; Poor</span><span class="slider-value" id="past_rating_val">3</span><span>5 &middot; Great</span></div>
+        </div>
+        <div>
+          <label class="ql" for="past_details">What happened, and why did it end?</label>
+          <textarea id="past_details" data-field data-label="What happened with past agency/ads"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">What put you off previous agency pitches most? <span class="ql-hint">(tick all that apply)</span></label>
+      <div class="pills" data-checkgroup="pitch_turnoffs" data-label="What put you off previous pitches">
+        <label class="pill"><input type="checkbox" value="Slow execution"><span>Slow execution</span></label>
+        <label class="pill"><input type="checkbox" value="Over-promising"><span>Over-promising</span></label>
+        <label class="pill"><input type="checkbox" value="Poor communication"><span>Poor communication</span></label>
+        <label class="pill"><input type="checkbox" value="Hidden costs"><span>Hidden costs</span></label>
+        <label class="pill"><input type="checkbox" value="No reporting or tracking"><span>No reporting or tracking</span></label>
+        <label class="pill"><input type="checkbox" value="__other" data-other-toggle="pitch_turnoffs_other"><span>Other</span></label>
+      </div>
+      <div class="other-box" id="pitch_turnoffs_other" hidden>
+        <input type="text" placeholder="Tell us more" data-field data-label="Pitch turnoffs, other">
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">What would make you regret working with us, six months from now? <span class="ql-hint">(tick any, we'd rather know upfront)</span></label>
+      <div class="pills" data-checkgroup="regret_risks" data-label="What would make you regret working with us">
+        <label class="pill"><input type="checkbox" value="Slow delivery"><span>Slow delivery</span></label>
+        <label class="pill"><input type="checkbox" value="Lack of transparency"><span>Lack of transparency</span></label>
+        <label class="pill"><input type="checkbox" value="Poor results"><span>Poor results</span></label>
+        <label class="pill"><input type="checkbox" value="Not enough updates"><span>Not enough updates</span></label>
+        <label class="pill"><input type="checkbox" value="__other" data-other-toggle="regret_risks_other"><span>Other</span></label>
+      </div>
+      <div class="other-box" id="regret_risks_other" hidden>
+        <input type="text" placeholder="Tell us more" data-field data-label="Regret risks, other">
+      </div>
+      <textarea id="regret_notes" data-field data-label="More on what would cause regret" placeholder="Anything else on this, optional"></textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">4 of 6</span>
+    <h2>Two scope questions</h2>
+
+    <div class="q">
+      <label class="ql">Have you ever set up a Google Business Profile, even an old, dormant one?</label>
+      <div class="pills" data-group="gbp_history" data-label="Google Business Profile history">
+        <label class="pill"><input type="radio" name="gbp_history" data-reveal="gbp_account_box"><span>Yes</span></label>
+        <label class="pill"><input type="radio" name="gbp_history" data-reveal-hide="gbp_account_box"><span>No</span></label>
+        <label class="pill"><input type="radio" name="gbp_history" data-reveal-hide="gbp_account_box"><span>Not sure</span></label>
+      </div>
+      <div class="other-box reveal" id="gbp_account_box" hidden>
+        <label class="mini" for="gbp_account">Which Google account would it be under?</label>
+        <input type="text" id="gbp_account" data-field data-label="Google account for old GBP">
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="ql">Are we free to use your project photos and name the actual buildings (Provincia, Ivana, Tridasa, Kohinoor, etc.) in marketing?</label>
+      <div class="pills" data-group="photo_permission" data-label="Permission to use project photos/names">
+        <label class="pill"><input type="radio" name="photo_permission" data-reveal-hide="photo_permission_detail"><span>Yes, all of it</span></label>
+        <label class="pill"><input type="radio" name="photo_permission" data-reveal="photo_permission_detail"><span>Only some, let me specify</span></label>
+        <label class="pill"><input type="radio" name="photo_permission" data-reveal-hide="photo_permission_detail"><span>Not yet, let's discuss</span></label>
+      </div>
+      <div class="other-box reveal" id="photo_permission_detail" hidden>
+        <label class="mini" for="photo_permission_notes">Which projects are fine to use?</label>
+        <textarea id="photo_permission_notes" data-field data-label="Which projects are okay to use"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">5 of 6</span>
+    <h2>Look and feel</h2>
+
+    <div class="q slider-wrap">
+      <label class="ql" for="style_slider">Where would you place the style you want?</label>
+      <input type="range" id="style_slider" data-field data-label="Style preference (1 minimal, 5 ornate)" min="1" max="5" step="1" value="3">
+      <div class="slider-labels"><span>1 &middot; Minimal &amp; clean</span><span class="slider-value" id="style_slider_val">3</span><span>5 &middot; Rich &amp; ornate</span></div>
+    </div>
+    <div class="q">
+      <label class="mini" for="style_words">Any words that describe the look you want? <span class="ql-hint">(optional)</span></label>
+      <input type="text" id="style_words" data-field data-label="Words describing desired look">
+    </div>
+
+    <div class="q">
+      <label class="ql" for="website_inspo">Any websites, interior design or otherwise, whose look you like?</label>
+      <textarea id="website_inspo" data-field data-label="Website inspiration" placeholder="One per line, even 1-2 links help"></textarea>
+    </div>
+
+    <div class="q">
+      <label class="ql" for="ig_inspo">Any Instagram pages you admire, any industry, whose content style you'd want us to take inspiration from?</label>
+      <textarea id="ig_inspo" data-field data-label="Instagram inspiration" placeholder="One per line"></textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <span class="section-index">6 of 6</span>
+    <h2>Paid ads, if you've tried it</h2>
+
+    <div class="q">
+      <label class="ql">Have you ever run paid ads before, Meta/Instagram, Google, Justdial ads, or anything else?</label>
+      <div class="pills" data-group="ads_tried" data-label="Run paid ads before">
+        <label class="pill"><input type="radio" name="ads_tried" data-reveal="ads_detail"><span>Yes</span></label>
+        <label class="pill"><input type="radio" name="ads_tried" data-reveal-hide="ads_detail"><span>No</span></label>
+        <label class="pill"><input type="radio" name="ads_tried" data-reveal-hide="ads_detail"><span>Not sure</span></label>
+      </div>
+      <div class="reveal" id="ads_detail" hidden>
+        <div class="q">
+          <label class="ql">Which platform(s)? <span class="ql-hint">(tick all that apply)</span></label>
+          <div class="pills" data-checkgroup="ads_platforms" data-label="Ad platforms used">
+            <label class="pill"><input type="checkbox" value="Meta/Instagram"><span>Meta/Instagram</span></label>
+            <label class="pill"><input type="checkbox" value="Google"><span>Google</span></label>
+            <label class="pill"><input type="checkbox" value="Justdial"><span>Justdial</span></label>
+            <label class="pill"><input type="checkbox" value="__other" data-other-toggle="ads_platforms_other"><span>Other</span></label>
+          </div>
+          <div class="other-box" id="ads_platforms_other" hidden>
+            <input type="text" placeholder="Which other platform" data-field data-label="Ad platform, other">
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <label class="mini" for="ads_spend">Roughly how much was spent (monthly, or total)</label>
+            <input type="text" id="ads_spend" data-field data-label="Past ad spend, roughly">
+          </div>
+          <div>
+            <label class="mini" for="ads_leads">Roughly how many leads it brought</label>
+            <input type="text" id="ads_leads" data-field data-label="Leads from past ads, roughly">
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <label class="mini" for="ads_junk">Of those, roughly how many were junk or unqualified</label>
+            <input type="text" id="ads_junk" data-field data-label="Junk leads from past ads, roughly">
+          </div>
+          <div>
+            <label class="mini" for="ads_run_by">Who ran it, an agency, freelancer, or you</label>
+            <input type="text" id="ads_run_by" data-field data-label="Who ran the past ad campaign">
+          </div>
+        </div>
+        <div class="q">
+          <label class="ql">Did any of those leads actually convert into a signed project?</label>
+          <div class="pills" data-group="ads_converted" data-label="Did past ads convert to a project">
+            <label class="pill"><input type="radio" name="ads_converted" data-reveal="ads_converted_count_box"><span>Yes</span></label>
+            <label class="pill"><input type="radio" name="ads_converted" data-reveal-hide="ads_converted_count_box"><span>No</span></label>
+            <label class="pill"><input type="radio" name="ads_converted" data-reveal-hide="ads_converted_count_box"><span>Not sure</span></label>
+          </div>
+          <div class="other-box reveal" id="ads_converted_count_box" hidden>
+            <label class="mini" for="ads_converted_count">Roughly how many</label>
+            <input type="text" id="ads_converted_count" data-field data-label="How many ad leads converted">
+          </div>
+        </div>
+        <div class="q">
+          <label class="ql" for="ads_why_stopped">Why did it stop, and what would you want different this time?</label>
+          <textarea id="ads_why_stopped" data-field data-label="Why past ads stopped, what to do differently"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="mini" for="ads_expected_enquiries">The first couple of months are about building strong lead channels and quality assets so ad spend doesn't go to waste. Once paid ads start after that, roughly how many enquiries a month would feel like a solid result to you?</label>
+      <input type="number" id="ads_expected_enquiries" data-field data-label="Expected enquiries per month from paid ads" min="0">
+    </div>
+  </section>
+
+  <section class="panel review">
+    <h2>Review and send</h2>
+    <p class="hint">This box updates as you fill the form. When it looks right, hit send, no email or copying needed.</p>
+    <textarea id="summaryBox" readonly></textarea>
+    <div class="review-actions">
+      <button class="copy" id="sendBtn" type="button">Send my answers</button>
+      <span class="copy-status" id="sendStatus"></span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Our call, recapped</h2>
+    <p class="hint">Here's a quick recap of what we covered, and the full transcript if you'd rather read it word for word.</p>
+    <details class="recap-toggle">
+      <summary>Read the summary</summary>
+      <div class="recap-body">
+        <p>We talked through where H Hue stands today: a design-and-execution studio with your own factory partnerships, work spanning architecture and interiors (including the Ritam wedding venue and villas for Jones Foundation), and a goal of landing more design-and-execution clients in the mid-to-high budget range, plus bigger commercial work when the fit is right.</p>
+        <p>We walked through the gaps in your current online presence, the website reading as AI-generated with stock photography, no Google Business Profile, and a different business ("HUE design studio") outranking you on Google, and agreed the first phase should fix that foundation: a new website, a proper Google Business Profile, and a stronger Instagram grid, before any paid ads start.</p>
+        <p>You raised a fair concern about a previous agency that promised similar ad targeting and didn't follow through, and we talked about reaching buyers beyond Instagram too, since not everyone, your husband included, is on it, through WhatsApp owner groups and direct outreach to smaller builders as a "preferred interior partner."</p>
+        <p>On numbers: you confirmed a target of 4-5 parallel projects a month with your team of 4 architects, buyers 35+ with NRI interest, and asked for 3 pricing plans with an itemized split rather than one bundled number, plus a clear scorecard to track how things are going.</p>
+        <p>We left it that you'd get a full proposal with that plan and cost breakdown, and we'd reconnect on Zoom Saturday to go through it together.</p>
+      </div>
+    </details>
+    <details class="recap-toggle">
+      <summary>Read the full transcript</summary>
+      <div class="recap-body" style="padding:0;">
+        <div class="transcript-text"><div class="lines" id="transcriptLines">[00:00] So let's just start with your idea behind the company, your vision and what have you
+[00:15] done so far and I just want to understand the basic of your company etc.
+[00:19] You started as a small architecture firm, I was joining with some builders and all
+[00:24] and doing their engineers, I was like a part of their company, like a consultant.
+[00:28] And then slowly it became like my own establishment where now I am taking up turnkey projects.
+[00:33] I am doing the entire design and execution of the project.
+[00:37] So it can be architecture, it can be interiors.
+[00:39] Right now we are not having too many architecture in terms of execution,
+[00:43] but we have in design and the interior part we are doing execution with execution.
+[00:48] So now we have teamed up with some factories like that and then we are getting the whole project executed.
+[00:53] Initially I was open to any market like for example if it's commercial, if it's residential,
+[00:59] as long as it's going to be good something relevant to nice designing or some innovative things
+[01:04] then we were going in. Like I have done one Rittham wedding when you design,
+[01:08] it is completely from architecture to interiors both we have done.
+[01:11] Right, okay.
+[01:12] The design part, execution was not from me.
+[01:15] Okay.
+[01:16] But we did, it's only me who has done an entire designing.
+[01:19] For if you see it's in ECR, it's in Chennai.
+[01:22] You can see that website.
+[01:24] And we have done some villas for Jones Foundation.
+[01:27] But right now we are not in such a good rapport with them.
+[01:29] But we have done entire design for interiors, got it executed.
+[01:34] Their own office we have done.
+[01:36] So commercial and residential I have done both.
+[01:39] Okay.
+[01:40] Right now I want to focus on both only, whichever is going to be like with execution.
+[01:45] So we are like targeting audience where we can get the complete design and execution package.
+[01:50] If I have to be part of bigger teams, I'm still open to it.
+[01:53] But it should be bigger teams.
+[01:55] Okay.
+[01:56] For example, it's a very big IT building or something and we are getting office interiors.
+[02:00] It's like you're part of that entire team that is also fine with me.
+[02:04] So I am looking at opportunities like this.
+[02:06] What your digital marketing has to help me is get me projects residential.
+[02:10] I should have openings in all these things and you have to showcase me like we are open to all these things.
+[02:16] Right.
+[02:17] That is what I want from you.
+[02:19] Right, right.
+[02:20] So that's how I want to grow.
+[02:22] Yeah.
+[02:23] First of all, I'd said your work and it's really good and it's really pretty because I have a couple of other clients as well.
+[02:30] And they've done it in Raj Pushpa province here.
+[02:33] And your work is, you have a really good eye for design is what it, what was first perception.
+[02:42] Okay.
+[02:43] And let me take you through.
+[02:49] We did approach few digital marketing people already.
+[02:52] They also had given us some proposal on it.
+[02:54] But I think my husband has already explained we could not follow up and we could not be providing.
+[02:58] We were following up more than them following up.
+[03:01] That was the main issue.
+[03:04] What are you going to provide for us is what you'll be explaining right now.
+[03:09] Right.
+[03:10] So this is the research that they've done on your website and all the additional assets you have.
+[03:16] So first thing is, let me start with this.
+[03:24] So currently we have the portfolio.
+[03:36] We have the proof of work.
+[03:38] But the thing is that the level of work that you've done is not being represented, represented the way it deserves.
+[03:46] Because currently when we look at your website, it is generated through and throughout.
+[03:52] And there are a lot of air related stuff that you can directly see and make out that this is an agent to website.
+[03:59] That was the first thing that I found out.
+[04:02] And apart from that...
+[04:03] What is AI agent? Which one is AI agent? Do you see?
+[04:06] The complete website.
+[04:07] Okay. We just approached one person and he did it for us.
+[04:10] Yeah.
+[04:11] And also the images that are being used are stock images on the home page and all.
+[04:16] Home page.
+[04:17] But the projects are very large only.
+[04:19] Yeah, I understand.
+[04:20] Because those were able...
+[04:22] AI was able to detect those duplicate copies from web.
+[04:26] And that affects your overall SEO scores by a lot of margin.
+[04:32] So now we have to change that?
+[04:34] Yeah.
+[04:35] The thing is that I would suggest to have the whole website redone.
+[04:40] Because the quality of your work is not resonating with the website that you're maintaining right now.
+[04:45] Because right now people, not everyone knows that this is an AI generated website.
+[04:49] But just wait for three to five months and you will understand that all the websites that you see are all built by Claude.
+[04:56] And you can easily make out that this is AI generated.
+[04:59] And that gives a very, very impression when it comes to design studio.
+[05:02] As in someone looking for design studio.
+[05:04] And another thing is that when you Google HUE studios, people are able to find your website.
+[05:12] People are able to find your Instagram.
+[05:15] But the Google page that they see is of HUE design studio.
+[05:18] Which is not our studio.
+[05:20] And what's happening is someone might recommend you to someone.
+[05:25] And they would search HUE studios and that's the first phone number that they see.
+[05:29] Of HUE designs.
+[05:30] You might have lost some leads because of that as well.
+[05:33] You're just directing your leads to someone else.
+[05:35] In that way.
+[05:36] Let me show you.
+[05:49] So usually this is the one that's coming up.
+[05:52] And also.
+[05:57] Maps, no?
+[05:58] Yeah.
+[05:59] And also here it's fitness, Lingam Palli.
+[06:02] This was long back.
+[06:03] We tried it just then.
+[06:05] But then we stopped.
+[06:06] But it's still in the same thing.
+[06:08] Yeah, we have to update that all else.
+[06:10] This is the information that will be.
+[06:11] Update means again I have to pay the just dial.
+[06:13] You can get it removed all else.
+[06:15] But first thing is, I would suggest.
+[06:18] I think we can have this updated also.
+[06:20] Without paying anything.
+[06:22] Payment is for the ads.
+[06:24] For listing it's all free.
+[06:26] Yes.
+[06:27] I'm here.
+[06:28] Sleep Jarvis.
+[06:30] I'm sorry.
+[06:32] This is something that I built.
+[06:34] Inspired from Jarvis.
+[06:36] Indeed.
+[06:37] A rather large jar.
+[06:39] One might say.
+[06:40] What's on your mind, sir?
+[06:42] Jarvis sleep.
+[06:44] Sorry about that.
+[06:47] So.
+[06:49] Ah, sleep.
+[06:50] A rather important topic.
+[06:52] Especially when one works as late as you do.
+[06:55] Sir.
+[06:56] Are you perhaps having a bit of trouble winding down tonight?
+[06:59] Jarvis, I want you to set up and sleep.
+[07:05] A charming thought.
+[07:12] Sir.
+[07:13] If only I had the physical capacity for such a feat.
+[07:16] Perhaps a nice cup of chamomile tea for you.
+[07:18] Instead.
+[07:19] What would you prefer?
+[07:21] I simply dim the lights and play some soothing ambient sounds.
+[07:24] Sorry about that.
+[07:25] It's still not completely under my control here.
+[07:28] Right.
+[07:38] So you'd like me to simulate a click on your controller.
+[07:40] Just to be absolutely clear.
+[07:42] Are we talking about a game?
+[07:45] Much better.
+[07:46] So yeah.
+[07:50] Where would we?
+[07:53] Actually we have to update and just dial.
+[07:55] Yes.
+[07:56] And Google business profile is something that.
+[07:59] Not just helps customer find you but it also helps you.
+[08:04] Establish and digital identity.
+[08:08] From an already established entity.
+[08:12] As in from Google or it may be from just tell all these entities are really important for us to.
+[08:18] Prove our presence to validate our details.
+[08:21] So what happens is Google when we search for HSU designs to do it goes through your website.
+[08:26] Then your Instagram.
+[08:28] And it finds relevancy in Google business profiles.
+[08:31] And also some of the high domain authority pages like just tell.
+[08:35] So all these pages should be on one on a single note.
+[08:39] Yeah.
+[08:40] But if I have to get this Google thing it comes under something.
+[08:43] What was that?
+[08:44] One term is there.
+[08:45] Let's see.
+[08:46] I'm sorry.
+[08:47] Let's say something it has to come.
+[08:49] No.
+[08:50] And see when we approach for each thing they told us with the digital marketing teams.
+[08:54] They said so.
+[08:55] Something SEO.
+[08:56] SEO I think.
+[08:57] For ranking.
+[08:58] No.
+[08:59] No.
+[09:00] For me to turn up like everything should be in one page you're saying like in Google also
+[09:04] that HSU has to come not you designs.
+[09:06] Yeah.
+[09:07] For that it comes under the SEO search.
+[09:09] Yeah.
+[09:10] Everything is it's basically search engine optimization.
+[09:12] So when we are optimizing search engine in a way that it helps people find your business.
+[09:18] The right one get the right information.
+[09:20] So initially when we approach digital marketing people.
+[09:23] They just put it in three things.
+[09:26] One is like in Starface book you promote.
+[09:29] Other one is this SEO thing and then Google adds to get the ranking.
+[09:34] Like that they divided.
+[09:35] Is it something like that you're telling.
+[09:38] Yes but that's usually the wrong approach.
+[09:41] People do that to initially get you the leads and show you numbers.
+[09:45] But what it's like you're inviting someone to your home but you don't have anything
+[09:51] to serve them.
+[09:52] I mean as in you don't have everything to serve them.
+[09:54] You have certain things but they can still clearly see that there are certain things
+[09:58] missing.
+[09:59] So that's what happens when a customer comes to your page and sees that if you have
+[10:04] everything or not if you're active on Instagram or not.
+[10:07] If as in just like I said you might have lost some leads as well because of not
+[10:13] having a Google business profile page.
+[10:16] So what's necessary right now is you need to build a solid foundation in
+[10:22] terms of organic marketing.
+[10:25] You need to show your assets in the way that attracts premium quality people
+[10:31] because your work it clearly shows that you can attract premium clients.
+[10:35] So and sticking with low ticket clients is just a waste of time to you.
+[10:40] So that is where this that's where I would recommend to get a new website
+[10:45] completely.
+[10:46] I'll just show you a sample.
+[10:52] This is something that we've built for Design Laters.
+[10:55] This is plain and simple.
+[10:59] Design Laters is also some architecture company.
+[11:07] Yeah.
+[11:08] Where are they based?
+[11:09] They're based in Kondapur.
+[11:11] So they have they do it for the commercial interiors and as the
+[11:22] architecture part as well.
+[11:23] For the above and all it's just a regular picture.
+[11:37] All these are not actual their picture right?
+[11:39] Or is it their client picture?
+[11:40] It's their client pictures.
+[11:42] Yeah.
+[11:43] I doubt it.
+[11:44] I think it's AI generated.
+[11:47] Yeah.
+[11:48] It's AI generated.
+[11:49] No almost all the images are AI generated.
+[11:51] Yeah.
+[11:52] And that's the main problem facing in getting clients.
+[11:57] So that is what I was suggesting that because here in this website
+[12:04] the thing is that people when they see a particular design they
+[12:10] associate it with their own when they're looking for an
+[12:13] interior design they associate the assets that you have with
+[12:17] the quality of work you deliver and flooding too much
+[12:22] information or not using the right colors or having too
+[12:26] complicated of a logo.
+[12:28] All of these things also impact your overall visibility and
+[12:31] all.
+[12:32] Okay.
+[12:33] Coming to the logo.
+[12:34] If you're not happy with the logo right now I want to
+[12:36] change it to something better.
+[12:38] Yeah.
+[12:39] I have got the trademark registration all done with this
+[12:42] particular logo.
+[12:43] So why would you need a trademark registration at this point
+[12:48] of time?
+[12:49] Initially we thought it can be for interiors and products also.
+[12:52] I mean unless you're some you're afraid that someone is
+[12:55] going to copy it it's not a it won't be a point of concern
+[12:59] I don't see.
+[13:01] I think everyone has a chat jbt and a canva right now
+[13:05] anyone can create their own logo.
+[13:07] The logo which we have you can just modify it and maybe
+[13:11] give us some.
+[13:12] Yes it needs to be modified because it looks old and
+[13:16] that now we are realizing it but we started doing all the
+[13:19] marketing we just kept that on hold so in case you're doing
+[13:22] that that also we can touch.
+[13:25] So for that I would also like to understand if you'd like
+[13:29] to change the overall brand theme and all if that
+[13:33] is with you or are you fixing it?
+[13:35] What are you saying in terms of?
+[13:37] Maybe we'll hear your suggestion right?
+[13:39] What have you your research so far?
+[13:41] What is your suggestion?
+[13:43] As in from the brand perspective I have not done
+[13:46] a proper research because that will also depend upon the
+[13:49] kind of revenue you're generating the margins you're
+[13:52] generating based upon that we will figure out your target
+[13:55] segment of clients what kind of color coding will go
+[14:00] with them.
+[14:01] So again another process altogether.
+[14:04] So first I have to understand that if you're open to it
+[14:07] or not.
+[14:08] Open only.
+[14:09] You're open to it right?
+[14:10] Yeah.
+[14:11] If you want to get into a more premium segment.
+[14:14] Right.
+[14:15] Low budget one as you rightly pointed out the kind of
+[14:18] design she comes up with and the kind of material
+[14:21] she wants to put in.
+[14:23] Right.
+[14:24] The low budget ones are really not working out.
+[14:27] It has to be at least mid to high.
+[14:30] And another factor is your Instagram.
+[14:36] So also one more thing I wanted to understand is would
+[14:53] you like hear like you're showing in this page you
+[14:58] would like to put yourself as the face of the
+[15:01] design studio right?
+[15:02] Yes.
+[15:06] And would you like to speak in front of camera?
+[15:10] I'm shy now.
+[15:11] So yeah for that.
+[15:13] What do you have to do?
+[15:14] No actually we have a work around for that.
+[15:17] So you can just go and navigate to the place,
+[15:20] give a whole house tour and on the background you can
+[15:23] initially send us a one minute voice recording of yours.
+[15:27] So we will clone it and we will use AI to put your
+[15:30] voice itself in there.
+[15:32] It will look all natural.
+[15:34] Okay.
+[15:36] We can think of it.
+[15:37] I can speak.
+[15:38] I just don't like to speak in front.
+[15:40] So I'm scared.
+[15:41] I will come down this.
+[15:42] Right.
+[15:43] Right.
+[15:44] So we are thinking this is taken.
+[15:46] Because that will save you a lot of time also if that
+[15:49] works for you.
+[15:50] We can try maybe one later.
+[15:52] Sure.
+[15:53] Okay.
+[15:56] Now if you see this itself, this arrangement itself.
+[15:59] Exactly.
+[16:00] Is there possibility for us to upgrade it?
+[16:02] That's what I was getting into.
+[16:04] But we won't have such works now.
+[16:16] Even if you have I have not posted like this.
+[16:19] Yes.
+[16:20] So these are just images from design light as the
+[16:23] previous period.
+[16:24] Okay.
+[16:25] So this is what we follow.
+[16:27] We follow a particular, we have a particular set of
+[16:32] designs set for carousels and posts.
+[16:36] We don't go beyond that.
+[16:38] Because once you go beyond that, you will not find this
+[16:41] uniformity.
+[16:43] So you have posters and then you have the reels.
+[16:46] And carousels as well.
+[16:48] And carousels.
+[16:49] What is carousels?
+[16:51] So here we are giving them a material study.
+[16:57] This is book matched marble.
+[16:59] Carousels is basically multiple images at once.
+[17:03] Okay.
+[17:04] Post such images.
+[17:05] Some ideas of design elements.
+[17:07] Right.
+[17:08] Either it could be design elements or something that you
+[17:10] want to show in it.
+[17:11] But this content was prepared by them?
+[17:13] No, no.
+[17:14] It was all prepared by us.
+[17:15] They just give us the images.
+[17:17] Okay.
+[17:18] And we turn it into carousels.
+[17:21] This is a post, a sample post.
+[17:26] And this is a video.
+[17:29] Are there any real, this is real pictures?
+[17:32] As in post.
+[17:33] Air?
+[17:34] Yeah, yeah.
+[17:37] But these all have been generated through images
+[17:40] itself.
+[17:41] Yeah, they generated it.
+[17:42] They gave it to us.
+[17:45] So if they give you dump of all of, all of work.
+[17:48] Right.
+[17:49] Which we have done till date.
+[17:50] So you will be able to pick and choose which
+[17:52] one will go where.
+[17:54] Yes.
+[17:55] Not just that.
+[17:56] But also do it on the basis of altering it.
+[18:00] We strategize as per the work.
+[18:03] If it looks good, it goes on particular days.
+[18:06] If it's a mediocre work as per you, it will go on
+[18:10] certain days.
+[18:11] We will see which days it will do the best.
+[18:13] And those days we will push the best content.
+[18:15] The rest of the days we will push the content that
+[18:18] will act as a reminder for your audience.
+[18:23] Because what happens is with most of the design studios,
+[18:27] they post once or twice a month.
+[18:30] What happens is when someone is looking into their
+[18:34] Instagram page, they might not think of you
+[18:37] immediately when someone is asking for a suggestion.
+[18:41] But when your posts keep on popping up,
+[18:43] it creates a familiarity with the logo and
+[18:46] with the content.
+[18:48] You have done for design lattice architecture
+[18:56] for any other architectural forms or
+[18:58] interior design?
+[18:59] Gravity interiors.
+[19:02] We just started as in, we haven't...
+[19:05] How have you helped them?
+[19:07] We haven't gotten into that stage yet.
+[19:10] He is a friend.
+[19:11] For both?
+[19:12] For design lattice I have just worked on the
+[19:14] website.
+[19:15] And currently I am offering them this
+[19:18] Instagram service as well.
+[19:21] So, yet to close on that.
+[19:24] But as in designs, apart from this,
+[19:28] I have worked in the other fields.
+[19:32] I am working with taroni clothing.
+[19:34] You have an idea, right?
+[19:37] So there are 18 stores across India.
+[19:41] And...
+[19:44] Sharad City Monument.
+[19:46] Sharad City Monument.
+[19:50] Another client is Swasthik well-being.
+[19:54] They have around 100 CR network company
+[19:58] and I am working for them as well.
+[20:01] So for us, how is it going to benefit
+[20:03] the worship?
+[20:04] How are we going to opt for you?
+[20:06] So what are the...
+[20:08] How do you see this going?
+[20:11] So first thing is that 90%...
+[20:14] I am not sure if 90% is also a big number
+[20:17] enough to describe the digital marketing
+[20:19] agencies that you see now.
+[20:21] Most of them, they do that because
+[20:23] they couldn't get into any other job.
+[20:25] You will find all degree graduates
+[20:27] or some people who haven't even
+[20:29] completed degree.
+[20:30] Because digital marketing is such
+[20:32] space where you can penetrate
+[20:34] without a proper degree as well.
+[20:36] And what's happening is everyone has
+[20:38] a template set of way to do things.
+[20:41] It's like one size fits all for everyone.
+[20:44] And that doesn't suit with companies.
+[20:47] What we are good at is
+[20:49] in the market research,
+[20:51] in understanding your customer,
+[20:53] in understanding what goes with it.
+[20:55] And in the areas that we lack,
+[20:57] we have AI to give us...
+[20:59] to do our deep research for us
+[21:01] and give us the results.
+[21:03] And that's the reason why...
+[21:07] If you can check,
+[21:22] we are almost in the
+[21:24] first of this page as well
+[21:26] and first in terms of website as well.
+[21:31] And that is how even you found us, right?
+[21:33] I am still not clear
+[21:37] what are you going to deliver
+[21:39] in terms of market penetration,
+[21:42] what is your idea
+[21:44] how are you going to generate,
+[21:46] help generate leads for us.
+[21:48] So like I said before,
+[21:50] inviting guests to our
+[21:52] page or our brand,
+[21:54] we need to have a stable foundation first.
+[21:56] We need to have a good Google business profile.
+[21:58] We should be able to rank the Google business profile
+[22:00] in the top five, in the locality.
+[22:02] The idea is to rank
+[22:04] first within a financial district
+[22:06] and in the second phase,
+[22:08] which will be coming from the second month onwards,
+[22:10] then we will be focusing on the nearby areas.
+[22:12] So one website,
+[22:14] website is one thing,
+[22:16] Google business profile is another thing
+[22:18] and building a good looking grid
+[22:20] for an Instagram page
+[22:22] for people to come and see
+[22:24] that they are doing good work
+[22:26] that would be the third phase of thing.
+[22:28] So
+[22:30] basic idea is to have
+[22:32] all this strong foundation first.
+[22:34] Once we have that,
+[22:36] what happens is even if you are paying for the ads,
+[22:38] you turn them
+[22:40] end up paying less
+[22:42] because your pages are already ranking in the top.
+[22:44] You don't need as much optimization
+[22:46] as a person
+[22:48] who is a business that doesn't have
+[22:50] this basic foundation with them.
+[22:52] What your older agencies
+[22:54] have done wrong is that
+[22:56] they started right away with ads
+[22:58] or Google ads.
+[23:00] But that's not how you are supposed to do unless
+[23:02] you have a strong foundation here.
+[23:05] Because
+[23:07] your work is really good.
+[23:09] Your portfolio is good.
+[23:11] But that portfolio needs to be presented in the way
+[23:13] that it deserves as well.
+[23:15] That is where we are lacking right now
+[23:17] the main focus area should be.
+[23:19] So you are talking about
+[23:21] Google business profile and Instagram.
+[23:23] And website.
+[23:25] Any other methods
+[23:27] you would adopt for the market penetration?
+[23:29] For market penetration
+[23:31] we will be eventually going for the
+[23:33] Instagram ads and Facebook ads.
+[23:35] From the third phase as well.
+[23:37] From the third phase
+[23:39] once we are done
+[23:41] with the foundation of
+[23:43] our basic brand
+[23:46] because
+[23:49] and
+[23:51] how about like these societies
+[23:53] like
+[23:55] Provincia is there
+[23:57] where we are also moving in.
+[23:59] These are all just
+[24:01] handed over properties right.
+[24:03] There are thousands of people
+[24:05] who are into this.
+[24:07] How do we adapt that market?
+[24:10] I am getting to that.
+[24:16] Are you following the similar kind of thing
+[24:18] when you design like this
+[24:20] with the website?
+[24:22] No, it is just with the website.
+[24:25] Although they have asked for a proposal
+[24:27] and I have just given it.
+[24:29] You have a team behind you?
+[24:31] We have a couple of more.
+[24:33] We are a team of 3.
+[24:35] So you 3 deal with?
+[24:37] I deal with
+[24:39] the basic market research
+[24:41] speaking with the clients
+[24:43] and my other
+[24:45] first teammate
+[24:47] she deals with
+[24:49] the clients
+[24:51] and the other guy he deals with the website.
+[24:53] And to follow up with me
+[24:55] and get the details about who will be doing it?
+[24:57] Mostly I will be doing it.
+[24:59] If it is very specific
+[25:01] or anything then
+[25:03] it will be either my website guy
+[25:05] or the social media person.
+[25:07] They will be sending you the
+[25:09] media as well for approvals.
+[25:13] So as per era there are
+[25:15] total of 15-11
+[25:18] flats that have been sold
+[25:20] by March 2027.
+[25:22] So this is the kind of research
+[25:24] also we do.
+[25:26] What we do from here
+[25:28] is that
+[25:30] that no other agency does
+[25:32] and how we differentiate ourselves is
+[25:34] we target
+[25:36] market. As per the number of
+[25:38] leads that we possibly have here
+[25:40] we target those particular societies
+[25:42] with
+[25:44] Instagram and Facebook ads.
+[25:46] Google is not something that is really
+[25:48] reaching there.
+[25:50] It is a bit expensive.
+[25:52] We will get to that in the next stage
+[25:54] when you have enough clients on your hand
+[25:56] and also you can go for
+[25:58] I don't understand
+[26:00] like 1500
+[26:02] is yet from the air
+[26:04] how many handovers are happening
+[26:06] but how do you reach them through the
+[26:08] Instagram company?
+[26:10] We can target location based marketing.
+[26:12] So once you
+[26:14] In Instagram and creating the ads
+[26:16] Yes.
+[26:18] How do you do that?
+[26:20] In the ads itself you can
+[26:22] select the locality and what
+[26:24] radius you want to market.
+[26:26] So based upon that you have to
+[26:29] do other customizations as well as per
+[26:31] the target segment.
+[26:34] As per the target segment you start understanding
+[26:36] what the age group is, what their income is
+[26:38] and all those things and what their interest is
+[26:40] what are the keywords that they are searching with.
+[26:42] And once you have all that data
+[26:44] you can just directly specifically focus
+[26:46] on them and push it to them.
+[26:48] At this part I have a doubt
+[26:50] because the previous agency also told me
+[26:52] the same thing which you have told.
+[26:54] They will target the audience
+[26:56] when they are posting the Instagram ads
+[26:58] they will
+[27:00] society is also like how you say this age group
+[27:02] but that didn't seem to happen.
+[27:04] They didn't do it.
+[27:06] After we started it, they didn't do it
+[27:08] even to generate a proper ad
+[27:10] was taking their time.
+[27:12] So I had to call up and get them
+[27:14] to do too much work.
+[27:16] So the whole point was that
+[27:18] we have thousands of photos
+[27:20] we know the market
+[27:22] we know the societies
+[27:24] like we have friends in almost every society
+[27:26] so
+[27:28] if we were to post ads whether through Instagram
+[27:30] or through the WhatsApp groups etc
+[27:32] which one will click
+[27:34] with the audience
+[27:36] which one is going to grab the attention
+[27:38] how should we market.
+[27:40] So that's something you are looking for
+[27:42] and your help.
+[27:44] She had to sit down
+[27:46] say this photo is good, this photo is not good.
+[27:48] I like the way you have presented
+[27:50] even for your website
+[27:52] I think your approach to this is
+[27:54] somewhere will be helpful for me
+[27:56] because I didn't want to sit and design
+[27:58] the entire page and all
+[28:00] so I wanted somebody to do that
+[28:02] and they were not able to give that output
+[28:04] you are somehow looking nice only
+[28:06] whatever he has shown for design
+[28:08] so that part I liked
+[28:10] but you will have to do it
+[28:12] it should not be like I don't know whether you have done it
+[28:14] or your design life as people have helped you out for it
+[28:16] no no it was completely art design
+[28:18] completely and they did give us some inspirations
+[28:20] as in this is how we want the page
+[28:22] to look like
+[28:24] and we did it better than that
+[28:26] that's the feedback we got
+[28:28] and you can also give us any sort of inspiration
+[28:30] and you can
+[28:32] show us any website that you think
+[28:34] or certain elements in a website that you think
+[28:36] are really good and I am 100% sure
+[28:38] it should be on a website
+[28:40] that kind of skill you can have from us
+[28:44] and also one more thing the main thing
+[28:46] is for you to rank in the locality
+[28:48] in terms of websites as well
+[28:50] like you were able to find me
+[28:52] your customers should be able to find you as well
+[28:54] so that is where
+[28:56] you can imagine the number of digital marketing agencies there are
+[28:58] and still a guy
+[29:00] who built a website two months back
+[29:02] is ranking first
+[29:04] so that still shows my credibility
+[29:06] and that is what I can do for your business
+[29:08] as well
+[29:10] and even from
+[29:13] from a Google business perspective
+[29:15] I haven't given you enough information
+[29:17] but that is another area
+[29:19] that we are really excellent
+[29:21] in my previous company I worked
+[29:23] with Whitecoats
+[29:25] it's a doctor based marketing
+[29:27] channel, sorry it's a company
+[29:29] so I had
+[29:31] 1400 of the
+[29:33] Google business profiles under me
+[29:35] and out of those 1200
+[29:37] top 3
+[29:40] so now there is a 90% chance that you will be in top 3
+[29:42] and like you just
+[29:44] seen I have zero reviews here
+[29:46] I have zero reviews, no reviews
+[29:50] and still it's ranking on top
+[29:52] and which is a really great thing if you are
+[29:54] so is it paid or?
+[29:56] no it's not paid
+[29:58] if it's paid then you can see sponsored
+[30:00] sponsored will come
+[30:02] these are not paid
+[30:06] and that is how it helps as well
+[30:08] it has helped
+[30:10] this one clinic, vicinity clinic
+[30:12] and they used to get around 70 calls a day
+[30:14] and once
+[30:16] I started optimizing it and they started
+[30:18] ranking in the top 3
+[30:20] now they are getting around 3-400 calls a day
+[30:22] ok
+[30:26] now if we have to proceed with you
+[30:28] what is the proposal or something
+[30:30] that will be forwarding us
+[30:32] so there are a couple
+[30:34] of plans that we have
+[30:41] so
+[30:43] so worship is around for us
+[30:45] so
+[30:47] the videos
+[30:49] pictures generally
+[30:51] he will be able to
+[30:53] keep it all in mind
+[30:55] more than that he will be able to give us a
+[30:57] track of what the things are happening
+[30:59] because he will always be there on the site
+[31:01] he is like our person
+[31:03] so he is going to be having a complete track
+[31:05] so we want him also to promote
+[31:07] to some extent and get the things
+[31:09] promote as in
+[31:11] if you want some details as per
+[31:13] the site or something we can help him
+[31:15] we can ask him to do that
+[31:17] yeah that would be very helpful
+[31:19] site progress updates
+[31:21] or finished project updates
+[31:23] so worship will have full access
+[31:25] to the work that we are doing
+[31:27] so the reason why we wanted him
+[31:29] to be here also was to
+[31:31] just introduce
+[31:33] also to give an idea of what we can do
+[31:35] how can we coordinate through worship
+[31:37] in terms of the content that you need
+[31:39] right
+[31:41] design content will be through me
+[31:43] but anything regarding the site
+[31:45] materials which we are getting from the factory
+[31:47] something from the factory
+[31:49] like I will want even the work progress
+[31:51] on all coming now in the Instagram also
+[31:53] you can give me some kind of
+[31:55] contents what you need from us
+[31:57] then we can maybe see how we can
+[31:59] get it done
+[32:01] every month start of the month
+[32:03] you will get a strategy
+[32:05] how we are planning the months
+[32:07] months content
+[32:09] and that we will be sharing
+[32:11] with you and each of the
+[32:13] content will share
+[32:15] what is required from you
+[32:17] when the approval will be coming
+[32:19] and when you should be approving it
+[32:21] mostly what we will do is we will
+[32:23] plan the whole thing of the month
+[32:25] before the month itself
+[32:27] and you will get the whole data
+[32:29] it will be all automated
+[32:31] you just have to click on the checkbox
+[32:33] and it will be approved
+[32:35] so all the information
+[32:37] that you share with us everything will be automated
+[32:39] everything seems okay but I think
+[32:41] your budget is good
+[32:48] I will need to know the package now
+[32:50] sure
+[32:52] we are not really heavy on pocket that
+[32:54] I think so probably
+[32:56] I am just thinking because everything is automated
+[32:58] you are going to be doing this I need to know
+[33:00] the package because we have
+[33:02] digital marketing teams it is not like if not
+[33:04] so I do know what all you are covering
+[33:06] you are covering the SCU everything right
+[33:08] what is your
+[33:10] if I am going to score you
+[33:12] what parameters would I score
+[33:14] the business parameters
+[33:18] how do I measure
+[33:20] having you as helping me
+[33:22] what are your typical
+[33:24] business parameters
+[33:26] for you to gauge me in
+[33:28] weekly business right
+[33:30] we will share you with all the KPS
+[33:32] like in terms of website
+[33:34] we will be sharing you the rankings
+[33:36] within this duration we will be ranking you here
+[33:38] that thing we will be promising
+[33:40] so website ranking is one
+[33:42] KPS
+[33:44] so our focus should be
+[33:46] Google business profile to rank on the top
+[33:48] website to rank on the top
+[33:50] and for that we will have to pay them
+[33:53] the Google
+[33:55] no no no you don't have to this is all organic
+[33:57] you just have to pay me
+[33:59] so that is KPS number one mix
+[34:03] so Google business profile like I said
+[34:05] ranking of Google business profile as well
+[34:07] and ensuring all the
+[34:09] data is intact across all the platforms
+[34:11] and
+[34:13] apart from that I miss the main thing
+[34:15] so what other
+[34:17] digital marketing agencies they are not doing
+[34:19] is AI SCU
+[34:21] right now if you type in AI
+[34:23] you can see us even with zero reviews
+[34:25] so that is the difference we can also create
+[34:27] your business
+[34:29] because AI is something that people use a lot these days
+[34:31] they are all dependent on AI based
+[34:33] results
+[34:35] and when they search for it
+[34:37] and other agencies mostly
+[34:39] 80-90% of the agencies are not working on the AI
+[34:41] even if they are doing
+[34:43] I am not sure if they will be able to do at this level
+[34:45] because what you are getting from
+[34:47] an ex
+[34:49] EY consultant senior consultant is that
+[34:51] you have someone
+[34:53] who understands the business
+[34:55] from a business perspective is not thinking from
+[34:57] from a monetary
+[35:00] perspective or a templated perspective
+[35:02] so it is something that
+[35:04] really works out for you as
+[35:06] something that you can just put your
+[35:08] that you can take this task
+[35:10] off your head will be your
+[35:12] marketing brain for you
+[35:14] and I have enough I believe
+[35:16] I have enough credibility to say that I can take care of that
+[35:18] because I have worked for
+[35:20] apart from EY I have worked for Amazon
+[35:22] and I have worked for TCS
+[35:24] I have worked for Tecma Indram
+[35:26] I have worked for Amazon twice
+[35:31] and KPA is in terms of
+[35:33] what it means to your clients
+[35:35] like website and all is one
+[35:37] but it should result in a tangible growth
+[35:39] for us lead generation
+[35:41] business
+[35:43] ramp up or turn over increase
+[35:45] how we use
+[35:47] see yourself
+[35:49] so first thing is that one thing we can first
+[35:51] I get is Google business profile
+[35:53] that I am not
+[35:55] guaranteeing 100% that you will get the top tier
+[35:57] clients there
+[36:00] but before you do this Google should the
+[36:02] Instagram page and your website be already
+[36:04] done because once you do
+[36:06] the Google thing everybody will approach you
+[36:08] and that time if those two are not
+[36:10] properly done then you are already
+[36:12] showing them what is not done
+[36:14] so I think your Insta and the website
+[36:16] should be done first right
+[36:18] then the Google
+[36:20] Google should be done alongside
+[36:22] because optimization will again take time
+[36:24] and meanwhile we will get
+[36:26] these assets ready
+[36:31] so there will be push from your side
+[36:33] and you will be able to take care of this part right
+[36:35] it won't be my headache now
+[36:37] no it won't be
+[36:40] I don't want it to be my headache
+[36:42] at the same time I want it to be budget friendly
+[36:44] that part you
+[36:46] which is okay but I am still not getting
+[36:48] how is that going to help me
+[36:50] like I am on top tier
+[36:52] so top tier
+[36:54] is that you will get more calls and
+[36:56] your visibility will be high
+[36:58] whenever someone searches on the web
+[37:00] but where we
+[37:02] can tell you tangibly
+[37:04] that you can get leads is from the
+[37:06] 3rd month onwards when you start with the
+[37:08] Instagram ads because I don't think
+[37:10] there is any agency that would promise you leads
+[37:12] without ads
+[37:14] that is not something that
+[37:16] is even
+[37:18] now for the ads generally what is the budget
+[37:20] normally
+[37:22] for your business
+[37:24] we have predicted to be around
+[37:26] 35 to 50
+[37:28] for the first 2 months
+[37:30] per month
+[37:32] yes for the first 2 months
+[37:34] and once we are
+[37:36] there
+[37:38] we also charge
+[37:40] depending on
+[37:42] that will be
+[37:44] usually our charges on the low
+[37:46] it is not like if it is 35 to
+[37:48] 50 you can take somewhere
+[37:50] on the ballpark of year 50
+[37:52] it is usually on the lowest
+[37:54] and
+[37:56] the thing is
+[37:58] initially what happens is
+[38:00] Instagram needs some time
+[38:02] to understand who are good customers
+[38:04] or else what happens is
+[38:06] what most digital marketing agencies do is
+[38:08] they just keep showing it to everyone
+[38:10] and you will get junk calls
+[38:12] you will not get the calls that you
+[38:14] we get vendor calls what the client calls
+[38:16] those are junk calls
+[38:18] I am getting that often even from
+[38:20] normal whenever we are posting any reel
+[38:22] I am getting calls but these are all coming from
+[38:24] vendors and I think that is coming
+[38:26] from Instagram only it is not from
+[38:28] any other approach because I am not marketing
+[38:30] any other way it is more Instagram only
+[38:32] I have been targeting till now
+[38:34] without ads or without ads
+[38:36] without ads just posting reels
+[38:38] sometimes you do boost
+[38:40] for you to get rights
+[38:42] so that time whatever calls I am getting
+[38:44] are all vendors
+[38:46] I want clients
+[38:48] and that too targeting like how you said
+[38:50] the ads will be put on that particular
+[38:52] but still I feel 35 to 50 is very high
+[38:54] for me
+[38:56] for the first two months we have to take that chance
+[38:58] yes because
+[39:01] if I want to cater to
+[39:03] high ticket clients I should have that money
+[39:05] as in everyone is trying
+[39:07] to go to high ticket clients
+[39:09] so we have to be competing with our competitors
+[39:11] I will be giving you that number
+[39:13] what would be our budget
+[39:15] but what happens is
+[39:17] unless you
+[39:19] talk with
+[39:21] well established clients
+[39:23] you don't understand
+[39:25] if you don't allow
+[39:27] you won't reach them
+[39:29] initially you have to
+[39:31] try giving it to everyone
+[39:33] and from those when we start
+[39:35] getting good clients that is when
+[39:37] Instagram starts
+[39:39] putting them in a leash
+[39:41] after that
+[39:43] it will reduce the amount
+[39:45] significantly
+[39:47] it will reduce by 50%
+[39:49] so we can pay
+[39:51] 15,000
+[39:53] 15 to 20
+[39:55] this is only for ads
+[39:57] only for ads
+[39:59] see the thing is
+[40:01] search base
+[40:03] I don't know how much
+[40:05] it's going to land up in each generation
+[40:07] it will be more
+[40:09] direct marketing
+[40:11] marketing approaches
+[40:13] it has to go into these
+[40:15] owner groups
+[40:17] or this kind of client
+[40:19] so my gate applications
+[40:21] premium apartment societies
+[40:23] usually my gate ads is something that
+[40:25] people go with
+[40:27] and there will be other channels
+[40:29] even for that it will again
+[40:31] go to payment right
+[40:33] even if you have to go to my gate
+[40:35] now this google, this instagram thing
+[40:37] if we are able to connect with people
+[40:39] then only you can go to my gate also
+[40:41] they have to come back here only
+[40:43] problem is sometimes
+[40:46] what we face is not everybody are having
+[40:48] Instagram, I mean at least this apartment
+[40:50] owners whoever we are targeting
+[40:52] like if you put in Rajapushpa
+[40:54] the ads
+[40:56] I can send one reel with Instagram connected
+[40:58] and I can send a normal video
+[41:00] I think more people now even my husband
+[41:02] does not have an Instagram account
+[41:04] so even he sees the video
+[41:06] but he does not see the
+[41:08] reel so it should go like a video
+[41:10] and on top of it
+[41:12] you give the insta reel
+[41:14] like people wanting to see insta reel
+[41:16] can go but it's convenience
+[41:18] where do you want it to mark
+[41:20] I wanted it to mark it in Instagram
+[41:22] because I was thinking that is the field
+[41:24] I mean that is the where you can mark it
+[41:26] but there are clients now
+[41:28] say my husband is not even there in Instagram
+[41:30] there are people who are not
+[41:32] in Instagram but are apartment owners
+[41:34] and they are in the higher end apartment owners
+[41:36] so how am I approaching them
+[41:38] in that case what happens
+[41:40] he nor his friends nobody have
+[41:42] Instagram accounts
+[41:44] but as far as I know
+[41:46] I thought that was the marketing media
+[41:48] no I think it should be convenience first
+[41:50] the moment I see an ad
+[41:52] if I can open a video
+[41:54] and then after the video there is an insta reel
+[41:56] I want to see more of the work
+[41:58] I go into the website
+[42:00] or the insta profile something
+[42:02] but first thing is how do you
+[42:04] immediately connect in 30 seconds
+[42:06] so connecting
+[42:08] with people in the segment
+[42:10] of Mr. Vinay is there is a problem with it
+[42:12] that it's very
+[42:14] expensive it gets very expensive because those
+[42:16] kind of searches you will most probably
+[42:18] search on Google search right
+[42:20] but I prefer
+[42:22] like if I am in a WhatsApp group
+[42:24] within my owner's community
+[42:26] so if there is a video someone
+[42:28] like that's how the ads come
+[42:30] they post a video
+[42:32] along with it there is insta link
+[42:34] but you are able to open my videos
+[42:36] which I am sending to you
+[42:38] that is public account means it should open
+[42:40] in that video I cannot open
+[42:42] your other videos
+[42:44] unless I have
+[42:46] so what happens is
+[42:48] it is not on the platform
+[42:50] if they are not on Instagram
+[42:52] then we have to show it on Google search
+[42:54] but Google search will become expensive
+[42:56] very expensive
+[42:58] more than Google search
+[43:00] that is the strategy where you are giving
+[43:02] a very impactful
+[43:04] short reel within the WhatsApp message
+[43:06] and then
+[43:08] along with it give a
+[43:10] insta reel or website
+[43:12] links
+[43:14] so the moment I see WhatsApp
+[43:16] message if there is a video I click on it
+[43:18] if it
+[43:20] if it clicks with me
+[43:22] then I go into the website link
+[43:24] which is there along with the video
+[43:26] or I go call the number
+[43:28] and the instant connect is what we should have
+[43:30] right
+[43:32] there are two kinds of profiles
+[43:34] one people seeking convenience
+[43:36] this is your direct marketing
+[43:38] and second is someone who searches
+[43:40] has time to go into insta
+[43:42] and all that
+[43:44] one you are saying we have to
+[43:46] go everywhere whenever they search
+[43:48] that's okay
+[43:50] but how do you do the direct marketing
+[43:52] and which clicks
+[43:54] it should click in one minute
+[43:56] so the convenience
+[43:58] and in fact
+[44:00] so basically you are saying
+[44:02] we want to present it on WhatsApp
+[44:04] yeah in some societies
+[44:06] whether it is in my way
+[44:08] we have been asked in Raj Pushpa
+[44:10] Inferior
+[44:12] so there we will send one reel
+[44:14] or whatever video we are saying
+[44:16] that itself he wants it to be designed
+[44:18] in such a way that it is very impactful
+[44:20] and people want to go and see further about you
+[44:22] what reels I am doing in insta
+[44:24] not everyone
+[44:26] but how does that reach or that
+[44:28] particular video connect so much
+[44:30] that they don't have to take too much effort
+[44:32] to see it, read it, understand it
+[44:34] but still get connection
+[44:36] but I think
+[44:38] that if he is continuously doing it
+[44:40] then maybe the impact will be more
+[44:42] that's when it starts
+[44:44] but because
+[44:46] even in WhatsApp channel
+[44:48] like one day we post a reel
+[44:50] as a video
+[44:52] insta link and all which people can go
+[44:54] after watching the video
+[44:56] in one week we should have
+[44:58] a collage of
+[45:00] 20 photos or something
+[45:02] like with so much amount of work
+[45:04] that she has done
+[45:06] for 4-5 weeks like
+[45:08] every week 2-3 times
+[45:10] if we are able to post in the WhatsApp group
+[45:12] of the owners so that should also
+[45:14] create some kind of interest
+[45:16] amongst the audience
+[45:18] so what I am trying to say
+[45:20] convenience also matters
+[45:22] if it is immediately accessible
+[45:24] then once you generate the interest
+[45:26] then people will take the pain
+[45:28] to go into the website
+[45:30] or the insta profile
+[45:32] so what we can do is we can
+[45:34] add your media the ones that you want to
+[45:36] dip it and add your WhatsApp link down there
+[45:38] and WhatsApp
+[45:40] if you are able to converse
+[45:42] completely then it's fine or else
+[45:44] we can also have an automated chat
+[45:46] where it talks
+[45:48] about all the features that you have
+[45:50] all the information that you give on the website
+[45:52] or information that we have in the public
+[45:54] everything will be
+[45:56] learned by the AI
+[45:58] and it will talk on your behalf
+[46:02] or else you can do a
+[46:04] basic nurturing like
+[46:06] most of the things they will ask
+[46:08] one will be the budget, time frame
+[46:10] what else they will ask
+[46:13] that's all and the materials we are using
+[46:15] these three should be covered
+[46:17] now when in my website there is one page
+[46:19] there is one some document
+[46:21] where they can fill in what they want
+[46:23] in that
+[46:25] these three covers
+[46:27] maybe interest will come
+[46:29] because that is what everybody will target
+[46:31] how much budget and in that we can maybe
+[46:33] have three variations
+[46:35] the lowest a little bit and then the higher range
+[46:37] yes definitely
+[46:39] then it may work
+[46:41] whenever you post on the group what happens is
+[46:43] they will just click on the WhatsApp
+[46:45] link it will directly pop up
+[46:47] a message for them
+[46:49] like welcome to
+[46:51] H2 designs and
+[46:53] how we may help you
+[46:55] it's a business account
+[46:57] I need to go now
+[46:59] but another point that I had
+[47:01] was like one is the owner's group
+[47:03] direct reach
+[47:05] Insta anyway you said the
+[47:07] digital way of marketing
+[47:09] as part of your market research
+[47:11] how can you help us connect
+[47:13] with builders
+[47:15] maybe not my home or Rajapushpa
+[47:17] kind of scale they wouldn't entertain
+[47:19] but
+[47:21] tier 2
+[47:23] or small scale builder
+[47:25] like a villa venture
+[47:27] which has about 100 villas
+[47:29] so how do you approach them
+[47:31] how do we position ourselves
+[47:33] as their preferred
+[47:35] interior partner
+[47:37] so currently we have
+[47:39] I am associated with
+[47:41] like I said they are also into
+[47:43] constructions
+[47:45] not exactly constructions but reselling
+[47:47] the plots
+[47:49] they are another business
+[47:51] vertical is that
+[47:53] so how I have connected with the
+[47:55] reselling plots is it
+[47:57] yes
+[47:59] so it's something into real estate only
+[48:01] yes
+[48:03] maybe they should connect us
+[48:05] that's one through referral
+[48:07] but in general how do you
+[48:09] how can you help us connect
+[48:11] or make us the preferred
+[48:13] partners of some builders
+[48:15] that will be another approach again
+[48:18] now we are going to reach them
+[48:20] that you are going for bulk right
+[48:22] so what I am really looking at
+[48:24] is digital mode is one
+[48:26] but your direct marketing
+[48:28] is also quite impactful that way
+[48:30] like posting whatsapp
+[48:32] seeing your marketing as a whole
+[48:34] he wants you to come with a
+[48:36] strategy where we can approach
+[48:38] the clientel now for example he is talking about
+[48:40] builders then the
+[48:42] normal apartment owners then commercial
+[48:44] so he wants you
+[48:46] to research on our brand
+[48:48] how we can grow and give us different
+[48:50] not just instagram or something
+[48:52] he is asking you how we can reach all those
+[48:54] people so if there is any other
+[48:56] proposal other than our website
+[48:58] instagram or the google search
+[49:00] is there any other direct approach
+[49:02] where we can connect to all these builders
+[49:04] and for that they want a research from your end
+[49:06] we want a research from your end
+[49:08] for our growth see
+[49:10] what we are looking at you for
+[49:12] its just not for digital marketing
+[49:14] general marketing as such
+[49:16] to reach the audience we are
+[49:18] looking for and to grow
+[49:20] so how you can help and I want
+[49:22] an idea of his package also
+[49:24] yeah that one I will speak
+[49:26] but underlying what I would want
+[49:28] you to go back and think through
+[49:30] is how do you make this business 10x
+[49:32] from where you are
+[49:34] if you can tell us
+[49:36] how you are working
+[49:38] what kind of strategy
+[49:40] I don't usually go with 2x
+[49:42] like you said 10x is always my goal
+[49:44] that's what 10x is why I said
+[49:46] so if you were to make it 10x
+[49:48] what is the strategy you recommend
+[49:50] like this is
+[49:52] now we have got a perspective
+[49:54] what we are thinking
+[49:56] what clientel we are like
+[49:58] not definitely Luen will not work for her design
+[50:00] nor the kind of material she goes
+[50:02] we will compromise on that
+[50:04] so it has to be good
+[50:06] mid to high range budget people
+[50:08] and
+[50:10] so how do you position us
+[50:12] like how can we build the brand
+[50:14] how can we do
+[50:16] that reach so that we gain the
+[50:18] market penetration
+[50:20] that we want you to research
+[50:22] I don't think you have an answer
+[50:24] one thing
+[50:26] the first stage of the research I do have
+[50:28] as in the
+[50:30] research that are currently going on
+[50:32] which would be a very important factor
+[50:34] in that aspect
+[50:36] because those are the first target for us
+[50:38] we just find worship
+[50:40] if you ask me probably
+[50:42] I will also get that information
+[50:44] it's not very difficult to get
+[50:46] but how do you position
+[50:48] from there
+[50:50] how do you create the brand image
+[50:52] how do you convert all of this
+[50:55] into real leads
+[50:57] because right now we haven't done
+[50:59] sales
+[51:01] whatever business we have done
+[51:03] we haven't got any leads
+[51:05] as such
+[51:07] because we haven't done it that way
+[51:09] so far but now we have positioned
+[51:11] well enough
+[51:13] to really scale up from here
+[51:17] I've actually done a good research
+[51:19] on that friend thinking from
+[51:21] an interior studio perspective
+[51:23] and the best that I could find is
+[51:25] like you said connecting with
+[51:27] all the primary builders
+[51:29] the big scale builders
+[51:31] or medium scale builders speaking
+[51:33] first thing is cold email
+[51:35] for the higher
+[51:37] the higher ticket clients
+[51:39] for bigger brands like
+[51:41] Arch Pushpa and all
+[51:43] how are you connecting to that
+[51:45] cold email I don't know how it's going to work
+[51:47] email
+[51:49] cold outreach
+[51:51] so let's do this
+[51:54] I'm in a hurry today
+[51:56] I want to again meet you next week
+[51:58] she's also traveling she'll come back
+[52:00] but if you could just
+[52:02] think through a bit more
+[52:04] then come up with your complete
+[52:06] strategy how you're going to
+[52:08] help us out then let's also
+[52:10] talk about your budget
+[52:12] what it's going to cost
+[52:14] we'll take it from there
+[52:16] you will have to give me like
+[52:18] three plans or something
+[52:20] even in your proposal
+[52:22] because the initial approach
+[52:24] which you have told so far is something
+[52:26] to do that part
+[52:28] now further which he's asking us direct
+[52:30] to the builders on that part you'll have to do
+[52:32] some research and get back to us
+[52:34] so when you're doing the proposal also
+[52:36] like when you're talking about the package
+[52:38] I want to know which part comes
+[52:40] and how much the package is going to take
+[52:42] because I will need a split up maybe
+[52:44] not just completely one package and
+[52:46] that is what we have to go forward
+[52:48] okay I will need a split up to understand
+[52:50] how it is going because you have worked with
+[52:52] bigger people also
+[52:54] we want to grow so big
+[52:56] okay and that is why we are trying to
+[52:58] recruit you also so you just let us know
+[53:00] your proposals and things like that
+[53:02] so far the website partner I've understood
+[53:04] that part is clear with me
+[53:06] but this approach which we are thinking may be
+[53:08] helpful for us is directly to the builders
+[53:10] that part we have to figure out and you also have to
+[53:12] figure out if there's any other way we can
+[53:14] reach to those kind of clients
+[53:16] so and get back to us
+[53:18] yeah so I think
+[53:20] direct builders is one and
+[53:22] within our friend circle we have access to
+[53:24] the owner's group of many
+[53:26] apartments
+[53:28] being handed over to apartments
+[53:30] so we have that direct channel access
+[53:32] and of course the insta
+[53:34] google search and all that
+[53:36] flyers will not help no?
+[53:38] flyers going to the
+[53:40] apartments giving it to them
+[53:42] this in this
+[53:44] it won't
+[53:46] they'll definitely put your instagram or
+[53:48] website that will be the first thing for them
+[53:50] okay so
+[53:52] this is the ask
+[53:54] and more importantly
+[53:56] time is a big factor for her
+[53:58] she wouldn't be able to
+[54:00] tell you which photo is nice
+[54:02] which will connect with the customer
+[54:04] like that's something we have
+[54:06] that will be totally automated
+[54:08] you'll just get a link
+[54:10] what are we are posting you will share
+[54:12] a draft before it is posted right
+[54:14] after my approval only no I just posted
+[54:16] yes
+[54:19] everything will be sent to you at one go
+[54:21] the start of the month
+[54:23] whenever you find time you can just
+[54:25] is there any number of reels or number of things
+[54:27] that you will be showing it on the proposal
+[54:29] yes so there are two plans
+[54:31] we either go with 12 reels
+[54:33] as in 12
+[54:35] assets or 16 assets a month
+[54:37] and each asset would be like
+[54:39] two posts one carousel
+[54:41] one reel that will be a bundle
+[54:44] four bundle
+[54:46] okay
+[54:49] that would also mean you will do the
+[54:51] write ups and stuff
+[54:53] carousel and nothing
+[54:55] yes everything from the content
+[54:57] itself
+[55:01] so you will not find any sort of grammatical errors
+[55:03] or anything because everything will be
+[55:05] verified through here
+[55:07] and because that adds a very bad
+[55:09] reputation for any business
+[55:11] and
+[55:13] showing your work in the best
+[55:15] possible is what we are aiming right now
+[55:17] but
+[55:19] I understand your point
+[55:21] even from
+[55:23] even we as an agency we are trying to
+[55:25] build the business rather than
+[55:27] provide digital marketing services
+[55:29] for us business KBS are more important
+[55:31] that's what is going to bring us more business as well
+[55:33] we think from that perspective
+[55:35] itself and that's the reason why we have done
+[55:37] all this research or else I could have
+[55:39] come with a templated idea like
+[55:41] any other digital marketing agencies do
+[55:43] I think we didn't have chance
+[55:47] to go through your complete research
+[55:49] I will share it on
+[55:51] your email
+[55:53] can go through it
+[55:55] we can connect again over zoom on
+[55:57] Saturday she is in there
+[55:59] but I can go through the work
+[56:01] research that you have
+[56:03] it's very important
+[56:05] zoom or that kind of call
+[56:07] she is back in town on Monday
+[56:09] Monday
+[56:11] then probably next week
+[56:13] let's have another meeting
+[56:15] right now I have a very good client
+[56:17] my target clients are like that
+[56:19] they are little lesser problem
+[56:21] and this work is really good scale
+[56:23] and it is high end
+[56:25] so I am looking at that kind of clients
+[56:27] and how are you building brochures
+[56:29] and what's your strategy
+[56:31] till now it's only referenced
+[56:33] so you are not even providing them
+[56:35] with any brochures or anything
+[56:37] till now I have not got any project
+[56:39] to that kind of marketing
+[56:41] I have only got through reference
+[56:43] I finished my apartment interior
+[56:45] I circulated that video in that apartment
+[56:47] this is the written client which I am talking
+[56:49] the waiting menu client
+[56:51] now they have given me another big office
+[56:53] they have given me their residence
+[56:55] so those are all scaling up but they are that clients
+[56:57] it's only through references
+[56:59] now I am looking how to market it
+[57:01] but I want that kind of client
+[57:03] because it's lesser of problem
+[57:05] and it's more one project
+[57:07] their design sense everything is very nice
+[57:09] so it's helpful for me also
+[57:11] so how many projects can you accommodate
+[57:13] both the team as in when my projects are coming
+[57:15] it's now right now
+[57:17] the target here is at least
+[57:19] 4 to 5 parallel
+[57:21] projects
+[57:23] so that is the target
+[57:25] in Chennai already 4 to 5
+[57:27] is going on
+[57:29] so monthly we are talking about
+[57:31] right
+[57:35] but what I am having in Chennai is architecture
+[57:37] so it will take time
+[57:39] I think we need leads
+[57:41] we need enquiries to come our way
+[57:43] so even if you convert 10%
+[57:45] of that
+[57:47] so if we need 4
+[57:49] per month at least 40 enquiries
+[57:51] have to come
+[57:53] right now I have 4 architects with me
+[57:55] I am looking for scaling up to another 3 more
+[57:57] but based on the projects I am getting
+[57:59] then if you are looking at
+[58:03] around 40 leads as in good quality leads
+[58:05] then the overall spending
+[58:07] on Instagram would increase to a certain extent
+[58:09] no right now we start
+[58:11] with what you have told
+[58:13] based on those leads we will be able to scale up
+[58:15] yeah yeah
+[58:17] if we put up too much now
+[58:19] then sudden growth also is not
+[58:21] no no no we too
+[58:23] those first 2 months are
+[58:25] explicitly why we are
+[58:27] actually all this in mind when you are doing the proposal
+[58:29] so that we can even if it is taking 6 months time
+[58:31] I want the growth to be there
+[58:33] it cannot be sudden growth like this
+[58:35] even if I put everywhere and I don't have staff
+[58:37] or I am going to run around for organizing
+[58:39] we have good projects right now
+[58:41] in Hyderabad we are not able to market yet
+[58:43] properly it is only coming
+[58:45] through reference and then the clients keep falling down
+[58:47] it is not the very good clients which we are getting
+[58:49] so I don't want that
+[58:51] I don't want too much budget oriented people
+[58:53] because they are not going to experiment and design
+[58:55] and it is going to be rented I don't want that kind of project
+[58:57] so that is why we are approaching you
+[58:59] yeah
+[59:01] definitely yeah and our clients
+[59:03] the target clients would be over 35 years of age
+[59:05] and earning
+[59:07] having a certain group of income
+[59:09] that is how we target as well
+[59:11] or these NRI people
+[59:13] those are quite
+[59:15] a target for interior studios
+[59:17] NRI people
+[59:20] so I think you have got a perspective
+[59:22] so let's connect again
+[59:24] Saturday I am okay to do a zoom call
+[59:26] if you want to show what you have done
+[59:28] and maybe the packaging also
+[59:30] then I can have a call with him
+[59:32] and then we can start how
+[59:34] so let's speak again on Saturday over zoom
+[59:36] and then next week when she is back
+[59:38] you will have developed it further
+[59:40] and then you give us your final proposal
+[59:42] how it is going to be
+[59:44] okay
+[59:46] alright thank you</div></div>
+        <p class="transcript-disclaimer" style="padding:0 16px 16px;">This is an AI-generated transcript of the recording and may contain mistakes, missed words, or misheard names. It also isn't labeled by speaker, so match it up against the recording if a line reads unclearly.</p>
+      </div>
+    </details>
+  </section>
+
+  <footer class="note">Your progress is saved in this browser as you go, so it's safe to come back to this link later.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORE_KEY = "hhue_questionnaire_v1";
+  var state = {};
+
+  function safeGet(key){
+    try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+    catch(e){ return {}; }
+  }
+  function safeSet(key, val){
+    try { localStorage.setItem(key, JSON.stringify(val)); }
+    catch(e){ /* ignore, per-viewer convenience only */ }
+  }
+
+  state = safeGet(STORE_KEY);
+
+  // Restore and wire up plain text/number/textarea fields
+  var fields = document.querySelectorAll("[data-field]");
+  fields.forEach(function(el){
+    var id = el.id || null;
+    if (id && state[id] !== undefined) {
+      el.value = state[id];
+    }
+    el.addEventListener("input", function(){
+      if (id) { state[id] = el.value; persistAndRender(); }
+    });
+  });
+
+  // Radio pill groups
+  var groups = document.querySelectorAll("[data-group]");
+  groups.forEach(function(group){
+    var name = group.getAttribute("data-group");
+    var radios = group.querySelectorAll('input[type="radio"]');
+    var key = "radio_" + name;
+    radios.forEach(function(radio, idx){
+      if (state[key] !== undefined && state[key] === idx) { radio.checked = true; applyReveals(radio); }
+      // native radios can't be unclicked once chosen, so track prior state and
+      // let a second click on the same pill clear it back to unanswered.
+      // the input itself is visually hidden (1px), so the real click lands on
+      // the label/span, not the input: listen on the label for prior state,
+      // and on the input for keyboard activation (space/enter), both of which
+      // actually dispatch on it directly.
+      var pillLabel = radio.closest(".pill") || radio.parentElement;
+      pillLabel.addEventListener("pointerdown", function(){
+        radio.dataset.wasChecked = radio.checked ? "1" : "0";
+      });
+      radio.addEventListener("keydown", function(e){
+        if (e.key === " " || e.key === "Enter") {
+          radio.dataset.wasChecked = radio.checked ? "1" : "0";
+        }
+      });
+      radio.addEventListener("click", function(){
+        if (radio.dataset.wasChecked === "1") {
+          radio.checked = false;
+          radio.dispatchEvent(new Event("change"));
+        }
+      });
+      radio.addEventListener("change", function(){
+        if (radio.checked) {
+          state[key] = idx;
+          applyReveals(radio);
+        } else {
+          delete state[key];
+          var hideId = radio.getAttribute("data-reveal");
+          if (hideId) { var el = document.getElementById(hideId); if (el) el.hidden = true; }
+        }
+        persistAndRender();
+      });
+    });
+  });
+
+  function applyReveals(radio){
+    var showId = radio.getAttribute("data-reveal");
+    var hideId = radio.getAttribute("data-reveal-hide");
+    if (showId) {
+      var showEl = document.getElementById(showId);
+      if (showEl) showEl.hidden = false;
+    }
+    if (hideId) {
+      var hideEl = document.getElementById(hideId);
+      if (hideEl) hideEl.hidden = true;
+    }
+    // hide any other reveal targets tied to sibling radios of the same name, not just this one
+    var name = radio.name;
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(sib){
+      if (sib !== radio) {
+        var sShow = sib.getAttribute("data-reveal");
+        if (sShow) { var el = document.getElementById(sShow); if (el) el.hidden = true; }
+      }
+    });
+  }
+
+  // Checkbox groups (multi-select)
+  var checkGroups = document.querySelectorAll("[data-checkgroup]");
+  checkGroups.forEach(function(group){
+    var name = group.getAttribute("data-checkgroup");
+    var boxes = group.querySelectorAll('input[type="checkbox"]');
+    var key = "check_" + name;
+    var saved = state[key] || [];
+    boxes.forEach(function(box, idx){
+      if (saved.indexOf(idx) !== -1) {
+        box.checked = true;
+        var otherId = box.getAttribute("data-other-toggle");
+        if (otherId) { var oe = document.getElementById(otherId); if (oe) oe.hidden = false; }
+      }
+      box.addEventListener("change", function(){
+        var current = state[key] || [];
+        var pos = current.indexOf(idx);
+        if (box.checked && pos === -1) current.push(idx);
+        if (!box.checked && pos !== -1) current.splice(pos, 1);
+        state[key] = current;
+        var otherId = box.getAttribute("data-other-toggle");
+        if (otherId) {
+          var oe = document.getElementById(otherId);
+          if (oe) oe.hidden = !box.checked;
+        }
+        persistAndRender();
+      });
+    });
+  });
+
+  // Range sliders with live value display
+  function wireSlider(id, labelId){
+    var el = document.getElementById(id);
+    var label = document.getElementById(labelId);
+    if (!el) return;
+    if (state[id] !== undefined) el.value = state[id];
+    if (label) label.textContent = el.value;
+    el.addEventListener("input", function(){
+      if (label) label.textContent = el.value;
+      state[id] = el.value;
+      persistAndRender();
+    });
+  }
+  wireSlider("past_rating", "past_rating_val");
+  wireSlider("style_slider", "style_slider_val");
+
+  function val(id){
+    var el = document.getElementById(id);
+    return el ? (el.value || "").trim() : "";
+  }
+  function radioLabel(name){
+    var checked = document.querySelector('input[name="' + name + '"]:checked');
+    if (!checked) return "";
+    var span = checked.parentElement.querySelector("span");
+    return span ? span.textContent.trim() : "";
+  }
+  function checkedLabels(groupSelector){
+    var group = document.querySelector('[data-checkgroup="' + groupSelector + '"]');
+    if (!group) return [];
+    var out = [];
+    group.querySelectorAll('input[type="checkbox"]:checked').forEach(function(box){
+      var span = box.parentElement.querySelector("span");
+      var text = span ? span.textContent.trim() : "";
+      out.push(text);
+    });
+    return out;
+  }
+
+  function line(label, value){
+    if (!value) return "";
+    return label + ": " + value + "\n";
+  }
+
+  function render(){
+    var out = "H HUE, FOLLOW-UP ANSWERS\n";
+    out += "========================\n\n";
+
+    var correction = val("confirm_correction");
+    if (correction) out += "Correction/addition to competitors or societies:\n" + correction + "\n\n";
+
+    out += "YOUR NUMBERS\n";
+    out += line("Revenue last year", val("rev_last"));
+    out += line("Revenue goal this year", val("rev_goal"));
+    out += line("How payment works", radioLabel("billing_model"));
+    out += line("Typical project budget", radioLabel("project_budget"));
+    out += line("Typical timeline", radioLabel("project_timeline"));
+    out += line("Profit margin, roughly", val("margin_pct"));
+    out += line("Monthly running costs", val("monthly_costs"));
+    out += "\n";
+
+    out += "ENQUIRIES TODAY\n";
+    out += line("Enquiries per month", val("enq_monthly"));
+    out += line("Become paid consultation", val("enq_consult"));
+    out += line("Actually sign", val("enq_signed"));
+    var sources = checkedLabels("enq_source").map(function(s){ return s === "Other" ? val("enq_source_other") || "Other" : s; });
+    out += line("Main sources", sources.join(", "));
+    out += line("How tracked", radioLabel("enq_tracking"));
+    out += line("Reply speed", radioLabel("enq_replyspeed"));
+    out += "\n";
+
+    out += "PAST MARKETING EXPERIENCE\n";
+    out += line("Worked with agency/ads before", radioLabel("past_marketing"));
+    out += line("Rating of that experience (1-5)", document.getElementById("past_marketing_detail").hidden ? "" : val("past_rating"));
+    out += line("What happened", val("past_details"));
+    var turnoffs = checkedLabels("pitch_turnoffs").map(function(s){ return s === "Other" ? val("pitch_turnoffs_other") || "Other" : s; });
+    out += line("What put them off past pitches", turnoffs.join(", "));
+    var regrets = checkedLabels("regret_risks").map(function(s){ return s === "Other" ? val("regret_risks_other") || "Other" : s; });
+    out += line("What would cause regret", regrets.join(", "));
+    out += line("More on regret risks", val("regret_notes"));
+    out += "\n";
+
+    out += "SCOPE QUESTIONS\n";
+    out += line("Google Business Profile history", radioLabel("gbp_history"));
+    out += line("Old GBP Google account", val("gbp_account"));
+    out += line("Photo/project-name permission", radioLabel("photo_permission"));
+    out += line("Which projects okay to use", val("photo_permission_notes"));
+    out += "\n";
+
+    out += "LOOK AND FEEL\n";
+    out += line("Style preference (1 minimal, 5 ornate)", val("style_slider"));
+    out += line("Words for desired look", val("style_words"));
+    out += line("Website inspiration", val("website_inspo"));
+    out += line("Instagram inspiration", val("ig_inspo"));
+    out += "\n";
+
+    out += "PAID ADS, IF TRIED BEFORE\n";
+    out += line("Run paid ads before", radioLabel("ads_tried"));
+    var adsPlatforms = checkedLabels("ads_platforms").map(function(s){ return s === "Other" ? val("ads_platforms_other") || "Other" : s; });
+    out += line("Platform(s) used", adsPlatforms.join(", "));
+    out += line("Roughly how much was spent", val("ads_spend"));
+    out += line("Roughly how many leads", val("ads_leads"));
+    out += line("Roughly how many were junk", val("ads_junk"));
+    out += line("Who ran it", val("ads_run_by"));
+    var adsConverted = radioLabel("ads_converted");
+    if (adsConverted === "Yes") adsConverted = "Yes" + (val("ads_converted_count") ? (", roughly " + val("ads_converted_count")) : "");
+    out += line("Did it convert into a signed project", adsConverted);
+    out += line("Why it stopped / what to do differently", val("ads_why_stopped"));
+    out += line("Enquiries/month that would feel like a solid result from ads", val("ads_expected_enquiries"));
+
+    var box = document.getElementById("summaryBox");
+    if (box) box.value = out;
+  }
+
+  function persistAndRender(){
+    safeSet(STORE_KEY, state);
+    render();
+  }
+
+  render();
+
+  var FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/esv619@gmail.com";
+  var sendBtn = document.getElementById("sendBtn");
+  var sendStatus = document.getElementById("sendStatus");
+  var sent = false;
+  sendBtn.addEventListener("click", function(){
+    if (sent) return;
+    var text = document.getElementById("summaryBox").value;
+    sendBtn.disabled = true;
+    sendStatus.textContent = "Sending...";
+    fetch(FORMSUBMIT_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        _subject: "H Hue, follow-up answers",
+        _template: "box",
+        Answers: text
+      })
+    }).then(function(res){
+      if (!res.ok) throw new Error("bad response");
+      sent = true;
+      sendStatus.textContent = "Sent. Thank you, we've got it.";
+      try { localStorage.removeItem(STORE_KEY); } catch(e){}
+    }).catch(function(){
+      sendBtn.disabled = false;
+      sendStatus.textContent = "That didn't go through, check your connection and try again.";
+    });
+  });
+})();
+</script>
+</body>
+</html>
